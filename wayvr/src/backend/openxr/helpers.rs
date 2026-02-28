@@ -5,7 +5,7 @@ use xr::OverlaySessionCreateFlagsEXTX;
 
 macro_rules! next_chain_insert {
     ($layer:expr, $payload:expr) => {{
-        let payload_ptr = $payload as *mut _ as *mut xr::sys::BaseInStructure;
+        let payload_ptr = $payload.as_mut() as *mut _ as *mut xr::sys::BaseInStructure;
         let new_elem = payload_ptr.as_mut().unwrap();
         let mut raw = $layer.into_raw();
         new_elem.next = raw.next as _;
