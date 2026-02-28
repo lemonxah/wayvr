@@ -31,7 +31,7 @@ pub(super) struct Skybox {
     view: Arc<ImageView>,
     sky: Option<WlxSwapchain>,
     grid: Option<WlxSwapchain>,
-    grid_color_scale_bias_khr: Option<xr::sys::CompositionLayerColorScaleBiasKHR>,
+    grid_color_scale_bias_khr: Option<Box<xr::sys::CompositionLayerColorScaleBiasKHR>>,
 }
 
 impl Skybox {
@@ -82,16 +82,18 @@ impl Skybox {
             .instance
             .exts()
             .khr_composition_layer_color_scale_bias
-            .map(|_| xr::sys::CompositionLayerColorScaleBiasKHR {
-                ty: xr::StructureType::COMPOSITION_LAYER_COLOR_SCALE_BIAS_KHR,
-                next: std::ptr::null(),
-                color_bias: Default::default(),
-                color_scale: xr::Color4f {
-                    r: 1.0,
-                    g: 1.0,
-                    b: 1.0,
-                    a: 1.0,
-                },
+            .map(|_| {
+                Box::new(xr::sys::CompositionLayerColorScaleBiasKHR {
+                    ty: xr::StructureType::COMPOSITION_LAYER_COLOR_SCALE_BIAS_KHR,
+                    next: std::ptr::null(),
+                    color_bias: Default::default(),
+                    color_scale: xr::Color4f {
+                        r: 1.0,
+                        g: 1.0,
+                        b: 1.0,
+                        a: 1.0,
+                    },
+                })
             });
 
         Ok(Self {
